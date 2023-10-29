@@ -11,15 +11,24 @@ import {
 } from '@/components/ui/table';
 import { PencilIcon, TrashIcon } from 'lucide-react';
 import { getUsers } from '@/app/lib/gs';
+import Search from '@/components/ui/search';
+import { CreateUser, DeleteUser, UpdateUser } from '@/components/buttons';
 
-export default async function UsersPage() {
+export default async function UsersPage({
+	searchParams,
+}: {
+	searchParams?: {
+		query?: string;
+	};
+}) {
 	const users = await getUsers();
 	return (
 		<div className='flex w-full p-5 overflow-clip'>
 			<div className='w-full'>
-				<Button asChild>
-					<Link href={'/dashboard/user/add'}>Add New User</Link>
-				</Button>
+				<div className='flex gap-5'>
+					<Search placeholder='Search ...' />
+					<CreateUser />
+				</div>
 				<div className='w-full'>
 					<Table className='w-full'>
 						<TableHeader>
@@ -39,8 +48,8 @@ export default async function UsersPage() {
 									<TableCell> {user.role}</TableCell>
 									<TableCell>{user.email}</TableCell>
 									<TableCell className='flex gap-2'>
-										<TrashIcon className='text-green-700 h-4 w-4' />
-										<PencilIcon className='text-red-700 h-4 w-4' />
+										<DeleteUser id={user.email} />
+										<UpdateUser id={user.id} />
 									</TableCell>
 								</TableRow>
 							))}
