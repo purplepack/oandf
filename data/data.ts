@@ -23,6 +23,16 @@ export const TRANSACTION_MENU: {
 		href: '/dashboard/vendor',
 		description: 'The description for the vendors page',
 	},
+	{
+		title: 'Sales',
+		href: '/dashboard/sales',
+		description: 'The description for the sales page',
+	},
+	{
+		title: 'Expense',
+		href: '/dashboard/expense',
+		description: 'The description for the expenses page',
+	},
 ];
 
 export const NAVBAR_MENU: {
@@ -31,10 +41,10 @@ export const NAVBAR_MENU: {
 }[] = [
 	{ title: 'Operations', href: '/dashboard/operations' },
 	{ title: 'Reports', href: '/dashboard/reports' },
-	{ title: 'Cashier', href: '/dashboard/cashier' },
-	{ title: 'Products', href: '/dashboard/products' },
-	{ title: 'Record Sales', href: '/dashboard/sales' },
-	{ title: 'Record Expense', href: '/dashboard/expense' },
+	// { title: 'Cashier', href: '/dashboard/cashier' },
+	// { title: 'Products', href: '/dashboard/products' },
+	// { title: 'Record Sales', href: '/dashboard/sales' },
+	// { title: 'Record Expense', href: '/dashboard/expense' },
 ];
 
 export const GETTING_STARTED: {

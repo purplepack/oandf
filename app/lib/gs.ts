@@ -1,7 +1,7 @@
 'use server';
 import { google } from 'googleapis';
 import { signIn } from '@/auth';
-import { getUserByEmail } from './utils';
+import { createObjectFromArrays, getUserByEmail } from './utils';
 
 const credentials = {
 	type: process.env.GOOGLE_API_TYPE,
@@ -68,7 +68,6 @@ export async function getUser(email: string): Promise<User | undefined> {
 
 		if (userArray && userArray.data && userArray.data.values) {
 			const user = getUserByEmail(email, userArray.data.values);
-			console.log(user);
 			if (user) return user;
 			else return undefined;
 		} else return undefined;
@@ -89,5 +88,36 @@ export async function authenticate(
 			return 'CredentialSignin';
 		}
 		throw error;
+	}
+}
+
+export async function getCompanyDetails() {
+	const auth = await google.auth.getClient({
+		projectId: process.env.PROJECT_ID,
+		credentials: credentials,
+		scopes: [
+			'https://www.googleapis.com/auth/spreadsheets',
+			'https://www.googleapis.com/auth/drive',
+		],
+	});
+
+	const sheets = google.sheets({ version: 'v4', auth });
+
+	try {
+		const companyArray = await sheets.spreadsheets.values.get({
+			spreadsheetId: '1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY', // Google App Script Test
+			range: 'About!A1:H',
+			majorDimension: 'ROWS',
+		});
+
+		if (companyArray && companyArray.data && companyArray.data.values) {
+			const key = companyArray?.data?.values[0];
+			const value = companyArray?.data?.values[1];
+			const company: ICompany = createObjectFromArrays(key, value);
+			return company;
+		}
+	} catch (error) {
+		console.error('Failed to fetch user:', error);
+		throw new Error('Failed to fetch user.');
 	}
 }

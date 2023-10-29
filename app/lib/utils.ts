@@ -1,6 +1,5 @@
 export function arrayToUser(arr: any[]): User {
 	const [id, name, role, email, phone, suuid] = arr;
-	console.log(arr);
 	const user: User = {
 		id,
 		name,
@@ -23,4 +22,23 @@ export function getUserByEmail(
 		}
 	}
 	return null;
+}
+
+export function createObjectFromArrays(
+	keys: string[],
+	values: any[]
+): Record<string, any> {
+	if (keys.length !== values.length) {
+		throw new Error('Keys and values arrays must have the same length.');
+	}
+
+	const obj: Record<string, any> = {};
+
+	for (let i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		const value = values[i];
+		obj[key] = value;
+	}
+
+	return obj;
 }
