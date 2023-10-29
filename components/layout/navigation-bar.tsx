@@ -11,45 +11,89 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { HammerIcon, PowerOffIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import LogoutButton from './logout-button';
+import { MenuIcon } from 'lucide-react';
 
 export function NavigationBar() {
 	return (
 		<div className='bg-primary w-full '>
-			<div className='max-w-7xl mx-auto py-2 flex items-center justify-between'>
+			<div className='lg:max-w-7xl mx-auto p-2 flex items-center justify-between w-full'>
 				<Link
 					href='/'
-					className='text-background text-xl font-bold'
+					className='text-background text-xl font-bold shrink-0'
 				>{`OPS & FIN`}</Link>
-				<div className='flex'>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button>Transactions</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent className='w-32'>
-							<DropdownMenuGroup>
-								{TRANSACTION_MENU.map((tm, key) => (
-									<DropdownMenuItem key={key}>
-										<Link href={tm.href}>
-											<span>{tm.title}</span>
+				<div className='lg:flex w-full justify-between hidden'>
+					<div className=''>
+						<Button asChild>
+							<Link href={'/dashboard'}>Dashboard</Link>
+						</Button>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button>Transactions</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent className='w-32'>
+								<DropdownMenuGroup>
+									{TRANSACTION_MENU.map(
+										(tm, key) => (
+											<DropdownMenuItem
+												key={key}
+											>
+												<Link
+													href={tm.href}
+												>
+													<span>
+														{tm.title}
+													</span>
+												</Link>
+											</DropdownMenuItem>
+										)
+									)}
+								</DropdownMenuGroup>
+							</DropdownMenuContent>
+						</DropdownMenu>
+						{NAVBAR_MENU.map((menu, key) => (
+							<Button
+								asChild
+								key={key}
+							>
+								<Link href={menu.href}>
+									{menu.title}
+								</Link>
+							</Button>
+						))}
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button>Tools</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent className='w-32'>
+								<DropdownMenuGroup>
+									<DropdownMenuItem asChild>
+										<Link
+											href={
+												'dashboard/user/add'
+											}
+										>
+											<span>Add User</span>
 										</Link>
 									</DropdownMenuItem>
-								))}
-							</DropdownMenuGroup>
-						</DropdownMenuContent>
-					</DropdownMenu>
-					{NAVBAR_MENU.map((menu, key) => (
-						<Button
-							asChild
-							key={key}
-						>
-							<Link href={menu.href}>{menu.title}</Link>
+								</DropdownMenuGroup>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
+					<div className='flex'>
+						<Button asChild>
+							<Link href={'/sales'}>Record Sales</Link>
 						</Button>
-					))}
-					<LogoutButton />
+						<Button asChild>
+							<Link href={'/expenses'}>
+								Record Expenses
+							</Link>
+						</Button>
+						<LogoutButton />
+					</div>
 				</div>
+				<MenuIcon className='w-6 h-6 text-background lg:hidden' />
 			</div>
 		</div>
 	);

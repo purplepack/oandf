@@ -7,7 +7,7 @@ export default function RootLayout({
 	return (
 		<main>
 			<NavigationBar />
-			<div className='max-w-7xl mx-auto'>{children}</div>
+			<div className='max-w-7xl overflow-clip mx-auto'>{children}</div>
 		</main>
 	);
 }
