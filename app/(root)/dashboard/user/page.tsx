@@ -4,33 +4,16 @@ import React from 'react';
 import {
 	Table,
 	TableBody,
-	TableCaption,
 	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
 import { PencilIcon, TrashIcon } from 'lucide-react';
+import { getUsers } from '@/app/lib/gs';
 
 export default async function UsersPage() {
-	const users: User[] = [
-		{
-			id: 'ertyuigf',
-			name: 'TRYR',
-			role: 'tree',
-			email: 'email',
-			phone: 'ERtkjhgvcv',
-			suuid: 'hbfhfh',
-		},
-		{
-			id: 'ertyuigf',
-			name: 'TRYR',
-			role: 'tree',
-			email: 'email',
-			phone: 'ERtkjhgvcv',
-			suuid: 'hbfhfh',
-		},
-	];
+	const users = await getUsers();
 	return (
 		<div className='flex w-full p-5 overflow-clip'>
 			<div className='w-full'>

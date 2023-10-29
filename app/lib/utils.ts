@@ -42,3 +42,20 @@ export function createObjectFromArrays(
 
 	return obj;
 }
+
+export function convertArrayToObject(arr: any[]): object[] {
+	const header = arr[0]; // The first array contains property names
+	const result = [];
+
+	for (let i = 1; i < arr.length; i++) {
+		const obj: { [key: string]: any } = {};
+
+		for (let j = 0; j < header.length; j++) {
+			obj[header[j]] = arr[i][j];
+		}
+
+		result.push(obj as User[]);
+	}
+
+	return result;
+}

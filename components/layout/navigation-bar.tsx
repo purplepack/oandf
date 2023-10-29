@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
-import { GETTING_STARTED, NAVBAR_MENU, TRANSACTION_MENU } from '@/data/data';
+import { NAVBAR_MENU, TRANSACTION_MENU } from '@/data/data';
 
 import { cn } from '@/lib/utils';
 import {
@@ -14,6 +14,15 @@ import {
 import { Button } from '../ui/button';
 import LogoutButton from './logout-button';
 import { MenuIcon } from 'lucide-react';
+import {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetDescription,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from '@/components/ui/sheet';
 
 export function NavigationBar() {
 	return (
@@ -93,7 +102,52 @@ export function NavigationBar() {
 						<LogoutButton />
 					</div>
 				</div>
-				<MenuIcon className='w-6 h-6 text-background lg:hidden' />
+				<Sheet>
+					<SheetTrigger asChild>
+						<MenuIcon className='w-6 h-6 text-background lg:hidden' />
+					</SheetTrigger>
+					<SheetContent className='pt-12 w-52 flex flex-col gap-0 '>
+						<SheetClose asChild>
+							<Button
+								variant='ghost'
+								asChild
+								className='w-full justify-start'
+							>
+								<Link href={'/dashboard'}>
+									Dashboard
+								</Link>
+							</Button>
+						</SheetClose>
+						<SheetClose asChild>
+							<Button
+								variant='ghost'
+								asChild
+								className='w-full justify-start'
+							>
+								<Link href={'/transactions'}>
+									Transactions
+								</Link>
+							</Button>
+						</SheetClose>
+						{NAVBAR_MENU.map((trans, key) => (
+							<SheetClose
+								asChild
+								key={key}
+							>
+								<Button
+									variant='ghost'
+									asChild
+									className='w-full justify-start'
+								>
+									<Link href={trans.href}>
+										{trans.title}
+									</Link>
+								</Button>
+							</SheetClose>
+						))}
+						<LogoutButton />
+					</SheetContent>
+				</Sheet>
 			</div>
 		</div>
 	);

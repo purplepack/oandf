@@ -14,11 +14,9 @@ export default async function LogoutButton() {
 					await signOut();
 				}}
 			>
-				<Button className='flex gap-1 items-center'>
+				<Button className='flex gap-1 justify-start items-center w-full'>
 					<PowerOffIcon className='w-4' />
-					<div className='hidden md:block'>
-						{session.user.name}
-					</div>
+					<div className='block'>{session.user.name}</div>
 				</Button>
 			</form>
 		);

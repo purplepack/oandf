@@ -1,9 +1,10 @@
-import { getCompanyDetails } from '@/app/lib/gs';
+import { getCompanyDetails, getUser } from '@/app/lib/gs';
 import { Card } from '@/components/ui/card';
 import React from 'react';
 
 export default async function DashboardPage() {
 	const company = await getCompanyDetails();
+
 	return (
 		<div className='flex flex-col h-screen items-center pt-10 gap-5'>
 			<h1 className='text-3xl font-medium'>DASHBOARD</h1>

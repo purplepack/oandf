@@ -46,25 +46,3 @@ export const NAVBAR_MENU: {
 	// { title: 'Record Sales', href: '/dashboard/sales' },
 	// { title: 'Record Expense', href: '/dashboard/expense' },
 ];
-
-export const GETTING_STARTED: {
-	title: string;
-	href: string;
-	description: string;
-}[] = [
-	{
-		title: 'About Us',
-		href: '/about',
-		description: 'A short description about Ops and Fin',
-	},
-	{
-		title: 'T & C',
-		href: '/tos',
-		description: 'A short review of the terms and conditions page',
-	},
-	{
-		title: 'FAQs',
-		href: '/faqs',
-		description: 'Important questions and answers about Ops and Fin',
-	},
-];

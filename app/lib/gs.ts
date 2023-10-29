@@ -1,7 +1,11 @@
 'use server';
 import { google } from 'googleapis';
 import { signIn } from '@/auth';
-import { createObjectFromArrays, getUserByEmail } from './utils';
+import {
+	convertArrayToObject,
+	createObjectFromArrays,
+	getUserByEmail,
+} from './utils';
 
 const credentials = {
 	type: process.env.GOOGLE_API_TYPE,
@@ -44,6 +48,33 @@ export async function getSheetById(range: string) {
 	});
 
 	return data.data;
+}
+
+export async function getUsers(): Promise<User[]> {
+	const auth = await google.auth.getClient({
+		projectId: process.env.PROJECT_ID,
+		credentials: credentials,
+		scopes: [
+			'https://www.googleapis.com/auth/spreadsheets',
+			'https://www.googleapis.com/auth/drive',
+		],
+	});
+	const sheets = google.sheets({ version: 'v4', auth });
+
+	try {
+		const userArray = await sheets.spreadsheets.values.get({
+			spreadsheetId: '1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY', // Google App Script Test
+			range: 'Staffs!A1:F',
+			majorDimension: 'ROWS',
+		});
+		if (userArray && userArray.data && userArray.data.values) {
+			const users = convertArrayToObject(userArray.data.values);
+			return users as User[];
+		} else return [];
+	} catch (error) {
+		console.error('Failed to fetch user:', error);
+		throw new Error('Failed to fetch user.');
+	}
 }
 
 export async function getUser(email: string): Promise<User | undefined> {
