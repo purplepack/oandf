@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import React from 'react';
 import {
 	Table,
@@ -33,6 +31,7 @@ export default async function UsersPage({
 					<Table className='w-full'>
 						<TableHeader>
 							<TableRow>
+								<TableHead>Index</TableHead>
 								<TableHead>Name</TableHead>
 								<TableHead>Role</TableHead>
 								<TableHead>Email</TableHead>
@@ -42,13 +41,14 @@ export default async function UsersPage({
 						<TableBody>
 							{users.map((user, key) => (
 								<TableRow key={key}>
+									<TableCell>{user.index}</TableCell>
 									<TableCell className='font-medium'>
 										{user.name}
 									</TableCell>
 									<TableCell> {user.role}</TableCell>
 									<TableCell>{user.email}</TableCell>
 									<TableCell className='flex gap-2'>
-										<DeleteUser id={user.email} />
+										<DeleteUser id={user.index} />
 										<UpdateUser id={user.id} />
 									</TableCell>
 								</TableRow>

@@ -46,3 +46,7 @@ export const NAVBAR_MENU: {
 	// { title: 'Record Sales', href: '/dashboard/sales' },
 	// { title: 'Record Expense', href: '/dashboard/expense' },
 ];
+export const SPREADSHEET_ID: string =
+	'1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY';
+
+export const USERS_SHEET_ID = 250218376; // 1603622916; //593100342

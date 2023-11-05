@@ -79,11 +79,9 @@ export function NavigationBar() {
 								<DropdownMenuGroup>
 									<DropdownMenuItem asChild>
 										<Link
-											href={
-												'dashboard/user/add'
-											}
+											href={'/dashboard/user'}
 										>
-											<span>Add User</span>
+											<span>Users</span>
 										</Link>
 									</DropdownMenuItem>
 								</DropdownMenuGroup>

@@ -7,6 +7,7 @@ import {
 	getUserByEmail,
 } from './utils';
 import { revalidatePath, unstable_noStore } from 'next/cache';
+import { USERS_SHEET_ID, SPREADSHEET_ID } from '@/data/data';
 
 const credentials = {
 	type: process.env.GOOGLE_API_TYPE,
@@ -15,6 +16,21 @@ const credentials = {
 	client_id: process.env.GOOGLE_CLIENT_ID,
 	universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN,
 };
+
+export async function getGoogleSheet() {
+	const auth = await google.auth.getClient({
+		projectId: process.env.PROJECT_ID,
+		credentials: credentials,
+		scopes: [
+			'https://www.googleapis.com/auth/spreadsheets',
+			'https://www.googleapis.com/auth/drive',
+		],
+	});
+
+	const sheets = google.sheets({ version: 'v4', auth });
+
+	return sheets;
+}
 
 export async function create() {
 	const auth = await google.auth.getClient({
@@ -30,22 +46,12 @@ export async function create() {
 	return data.data;
 }
 
-export async function getSheetById(range: string) {
-	const auth = await google.auth.getClient({
-		projectId: process.env.PROJECT_ID,
-		credentials: credentials,
-		scopes: [
-			'https://www.googleapis.com/auth/spreadsheets',
-			'https://www.googleapis.com/auth/drive',
-		],
-	});
-
-	const sheets = google.sheets({ version: 'v4', auth });
-
+export async function getSheetByRange(range: string, majorDimension?: string) {
+	const sheets = await getGoogleSheet();
 	const data = await sheets.spreadsheets.values.get({
-		// spreadsheetId: '11EUwYoCmpXZMWxLlHQ1B5nibMY-MqmIK1dfd0F2XrKI',
-		spreadsheetId: '1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY', // Google App Script Test
+		spreadsheetId: SPREADSHEET_ID,
 		range: range,
+		majorDimension: majorDimension || 'ROWS', // "COLUMNS" || "ROWS"
 	});
 
 	return data.data;
@@ -53,24 +59,10 @@ export async function getSheetById(range: string) {
 
 export async function getUsers(): Promise<User[]> {
 	unstable_noStore();
-	const auth = await google.auth.getClient({
-		projectId: process.env.PROJECT_ID,
-		credentials: credentials,
-		scopes: [
-			'https://www.googleapis.com/auth/spreadsheets',
-			'https://www.googleapis.com/auth/drive',
-		],
-	});
-	const sheets = google.sheets({ version: 'v4', auth });
-
 	try {
-		const userArray = await sheets.spreadsheets.values.get({
-			spreadsheetId: '1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY', // Google App Script Test
-			range: 'Staffs!A1:F',
-			majorDimension: 'ROWS',
-		});
-		if (userArray && userArray.data && userArray.data.values) {
-			const users = convertArrayToObject(userArray.data.values);
+		const userArray = await getSheetByRange('Staffs!A1:F');
+		if (userArray && userArray.values) {
+			const users = convertArrayToObject(userArray.values);
 			return users as User[];
 		} else return [];
 	} catch (error) {
@@ -79,78 +71,13 @@ export async function getUsers(): Promise<User[]> {
 	}
 }
 
-export async function deleteUser(formData: FormData) {
-	const id = formData.get('id')?.toString();
-	const user = await getUser(id!);
-	console.log(user);
-	const auth = await google.auth.getClient({
-		projectId: process.env.PROJECT_ID,
-		credentials: credentials,
-		scopes: [
-			'https://www.googleapis.com/auth/spreadsheets',
-			'https://www.googleapis.com/auth/drive',
-		],
-	});
-
-	const sheets = google.sheets({ version: 'v4', auth });
-	const activeSheet = await sheets.spreadsheets.values.get({
-		// spreadsheetId: '11EUwYoCmpXZMWxLlHQ1B5nibMY-MqmIK1dfd0F2XrKI',
-		spreadsheetId: '1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY', // Google App Script Test
-		range: 'Staffs',
-	});
-	console.log(activeSheet.data);
-	const sheetId = 1603622916;
-	const response = await sheets.spreadsheets.batchUpdate({
-		spreadsheetId: '1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY',
-
-		// Request body metadata
-		requestBody: {
-			requests: [
-				// {
-				// 	deleteDimension: {
-				// 		range: {
-				// 			sheetId: sheetId,
-				// 			dimension: 'COLUMNS',
-				// 			startIndex: 0,
-				// 			endIndex: 6,
-				// 		},
-				// 	},
-				// },
-				{
-					deleteDimension: {
-						range: {
-							sheetId: sheetId,
-							dimension: 'ROWS',
-							startIndex: 7,
-							endIndex: 7,
-						},
-					},
-				},
-			],
-		},
-	});
-	console.log(response.data);
-	revalidatePath('/dashbord/user', 'page');
-
-	return response.data;
-}
-
 export async function getUser(email: string): Promise<User | undefined> {
-	const auth = await google.auth.getClient({
-		projectId: process.env.PROJECT_ID,
-		credentials: credentials,
-		scopes: [
-			'https://www.googleapis.com/auth/spreadsheets',
-			'https://www.googleapis.com/auth/drive',
-		],
-	});
-
-	const sheets = google.sheets({ version: 'v4', auth });
+	const sheets = await getGoogleSheet();
 
 	try {
 		const userArray = await sheets.spreadsheets.values.get({
 			// spreadsheetId: '11EUwYoCmpXZMWxLlHQ1B5nibMY-MqmIK1dfd0F2XrKI',
-			spreadsheetId: '1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY', // Google App Script Test
+			spreadsheetId: SPREADSHEET_ID, // Google App Script Test
 			range: 'Staffs!A1:F',
 			majorDimension: 'ROWS',
 		});
@@ -163,6 +90,41 @@ export async function getUser(email: string): Promise<User | undefined> {
 	} catch (error) {
 		console.error('Failed to fetch user:', error);
 		throw new Error('Failed to fetch user.');
+	}
+}
+
+export async function deleteUser(formData: FormData) {
+	const index = parseInt(formData.get('id')?.toString()!);
+	const sheets = await getGoogleSheet();
+	const startIndex = index;
+	const endIndex = index + 1;
+
+	try {
+		const response = await sheets.spreadsheets.batchUpdate({
+			spreadsheetId: SPREADSHEET_ID,
+
+			// Request body metadata
+			requestBody: {
+				requests: [
+					{
+						deleteDimension: {
+							range: {
+								sheetId: USERS_SHEET_ID,
+								dimension: 'ROWS',
+								startIndex: startIndex, // parseInt(index!),
+								endIndex: endIndex, // parseInt(index! + 1),
+							},
+						},
+					},
+				],
+			},
+		});
+		// revalidatePath('/dashboard/user', 'page');
+		console.log(response);
+
+		return response;
+	} catch (error) {
+		return { message: 'Database Error: Failed to Delete user.' };
 	}
 }
 
@@ -179,22 +141,53 @@ export async function authenticate(
 		throw error;
 	}
 }
+export async function addUser(
+	prevState: string | undefined,
+	formData: FormData
+) {
+	const sheets = await getGoogleSheet();
+	const data = formData;
+	const sortedData = Object.fromEntries(formData);
+
+	try {
+		// console.log(data, sortedData);
+		const response = await sheets.spreadsheets.values.append({
+			spreadsheetId: SPREADSHEET_ID,
+			valueInputOption: 'RAW',
+			range: 'Staffs!A1:F',
+			requestBody: {
+				majorDimension: 'ROWS',
+				range: 'Staffs!A1:F',
+				values: [
+					[
+						formData.get('name'),
+						formData.get('role'),
+						formData.get('email'),
+						formData.get('phone'),
+						formData.get('password'),
+					],
+				],
+			},
+		});
+		// revalidatePath('/dashboard/user', 'page');
+		console.log(response, 'Success');
+
+		return response;
+	} catch (error) {
+		if (error as Error) {
+			console.log(error);
+			return 'Something Went Wrong';
+		}
+		throw error;
+	}
+}
 
 export async function getCompanyDetails() {
-	const auth = await google.auth.getClient({
-		projectId: process.env.PROJECT_ID,
-		credentials: credentials,
-		scopes: [
-			'https://www.googleapis.com/auth/spreadsheets',
-			'https://www.googleapis.com/auth/drive',
-		],
-	});
-
-	const sheets = google.sheets({ version: 'v4', auth });
+	const sheets = await getGoogleSheet();
 
 	try {
 		const companyArray = await sheets.spreadsheets.values.get({
-			spreadsheetId: '1HUMnnlvc2NirqFB489JtVC1_y97mF5khwChOZ5MbexY', // Google App Script Test
+			spreadsheetId: SPREADSHEET_ID, // Google App Script Test
 			range: 'About!A1:H',
 			majorDimension: 'ROWS',
 		});

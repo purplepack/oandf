@@ -1,5 +1,5 @@
 export function arrayToUser(arr: any[]): User {
-	const [id, name, role, email, phone, suuid] = arr;
+	const [id, name, role, email, phone, suuid, index] = arr;
 	const user: User = {
 		id,
 		name,
@@ -7,6 +7,7 @@ export function arrayToUser(arr: any[]): User {
 		email,
 		phone,
 		suuid, //Secure unique user id
+		index,
 	};
 
 	return user;

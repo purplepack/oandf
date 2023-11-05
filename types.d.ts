@@ -5,6 +5,7 @@ type User = {
 	email: string;
 	phone: string;
 	suuid: string;
+	index: string;
 };
 
 type ICompany = {
